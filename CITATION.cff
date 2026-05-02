@@ -1,0 +1,11 @@
+cff-version: 1.2.0
+message: "If you use the institutional-control framework, artifact field sets, examples, or public docs from this repository, please cite the technical report."
+title: "From Agents to Institutions: A Field Study of Institutional Control in an AI-Staffed Prediction-Market Desk"
+version: 1.0.0
+date-released: 2026-05-02
+url: "https://github.com/wes-zheng/ai_institutions"
+repository-code: "https://github.com/wes-zheng/ai_institutions"
+authors:
+  - family-names: Zheng
+    given-names: Wes
+license: CC-BY-4.0
