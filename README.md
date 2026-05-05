@@ -1,4 +1,5 @@
 # From Agents to Institutions
+[![DOI](https://zenodo.org/badge/1227585368.svg)](https://doi.org/10.5281/zenodo.20033468)
 
 Public V1.0 package for a technical report on institutional control for AI labor.
 
