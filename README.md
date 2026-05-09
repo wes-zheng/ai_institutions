@@ -3,7 +3,7 @@
 
 Public V1.0 package for a technical report on institutional control for AI labor.
 
-The paper studies a human-owned, AI-staffed prediction-market desk as an empirical stress test for a broader systems claim: auditable, controllable, and improvable AI labor depends on institutional design, not only on agent autonomy.
+The paper studies a human-owned, AI-staffed prediction-market desk as an empirical stress test for a broader systems claim: AI labor can be made more auditable, controllable, and better structured for governed improvement through institutional design, not only through agent autonomy.
 
 **Author:** Wes Zheng
 
@@ -52,8 +52,11 @@ Start with `technical_report/paper.pdf` for the formatted report or `technical_r
 5. method/system stack;
 6. evaluation framework;
 7. bounded results;
-8. mechanism case studies;
-9. discussion, ethics, limitations, and appendices.
+8. anchor mechanism cases;
+9. discussion;
+10. ethics, risk, and compliance;
+11. limitations;
+13. appendices.
 
 ## Try The Idea
 

@@ -14,9 +14,7 @@ This paper reports a field study of an AI-staffed prediction-market desk under h
 
 We use **institutional control** to mean the durable mechanisms by which an AI organization assigns ownership, constrains authority, records evidence, verifies outputs, validates closure, handles no-action, reconciles outcomes, and mutates doctrine. The central empirical finding is that many failures that appear to be agent failures are better diagnosed as organizational failures: missing ownership, broad intent not compiled into executable work, tool access mistaken for authority, plausible artifacts accepted without verifier state, stale messages treated as current work, completion confused with closure, and learning trapped in chat or tickets rather than becoming durable doctrine.
 
-A key finding is that the institutional layer did not appear fully formed: repeated failures were promoted into durable role, work-record, message, verifier, replay, tool, and playbook artifacts under manager or owner authority.
-
-The study contributes a framework for AI organizations as a level above agents and workflows, bounded field evidence from one human-owned deployment, and organization-level metrics for evaluating AI labor systems. It does not claim general causal certainty. It studies the institutional infrastructure for auditable, controllable, and improvable AI labor rather than deployment-wide performance improvement.
+A central mechanism observed in the study is that the institutional layer did not appear fully formed: recurring fixes to repeated failures were promoted into durable role, work-record, message, verifier, replay, tool, and playbook artifacts by the manager employee, inside a human-owner governance boundary. We contribute a framework for AI organizations as a level above agents and workflows, bounded evidence from one human-owned deployment, and organization-level metrics for evaluating AI labor systems. The study does not claim causal certainty or deployment-wide performance improvement; it shows how institutional infrastructure can make AI labor more auditable, controllable, and better structured for governed improvement under operational pressure.
 
 ## 1. Introduction
 
@@ -26,7 +24,9 @@ This paper argues that the path from agents to AI labor runs through institution
 
 The distinction is practical. A capable agent can produce a plausible analysis while no one owns the next step. A tool-using agent can see market or account information without being authorized to act on it. A reviewer agent can provide helpful commentary without making an acceptance decision. A workflow can finish while the governing record remains unclosed. A memory system can store lessons while the next employee still acts from stale doctrine. These are not just prompt-engineering problems. They are organizational-control problems.
 
-We study those problems through an AI-staffed prediction-market desk. The deployment was AI-staffed for daily operational labor and human-owned for goals, risk boundaries, institutional design, and publication judgment. It was composed of AI employees with durable roles, messages, work records, playbooks, review gates, execution boundaries, manager verification, replay records, and doctrine changes. The empirical domain is deliberately demanding. Weather and climate prediction-market work involves uncertainty modeling, source freshness, market interpretation, risk review, execution discipline, no-action judgment, and delayed settlement or outcome reconciliation. It also leaves artifacts when the organization fails.
+We study those problems through an AI-staffed prediction-market desk. The deployment was AI-staffed for daily operational labor and human-owned for goals, risk boundaries, and outer governance. It was composed of AI employees with durable roles, messages, work records, playbooks, review gates, execution boundaries, manager verification, replay records, and doctrine changes. The empirical domain is deliberately demanding. Weather and climate prediction-market work involves uncertainty modeling, source freshness, market interpretation, risk review, execution discipline, no-action judgment, and delayed settlement or outcome reconciliation. It also leaves artifacts when the organization fails.
+
+"Manager employee" refers to an AI employee role with authority to close, reroute, and perform scoped institutional mutations inside the human-owner governance boundary. The human owner retained goals, risk boundaries, and outer governance authority.
 
 The paper is not about a trading strategy. It is about what had to be built around AI workers before their work became accountable, reviewable, stoppable, and improvable.
 
@@ -59,7 +59,7 @@ The organizing frame is four-part: institutional control converts agent outputs 
 | --- | --- | --- |
 | State control | work records, workboard, closure | chat-as-state and fake completion |
 | Authority control | role contracts, verifier gates, tool boundaries | capability mistaken for permission |
-| Communication control | messages, inbox staleness, no-reply | false motion and stale triggers |
+| Communication control | messages, freshness checks, no-reply | false motion and stale triggers |
 | Learning control | replay, doctrine mutation, case-only classification | lessons trapped in memory or tickets |
 
 ### 1.3 Research Questions
@@ -86,45 +86,51 @@ This paper makes three contributions.
 
 ## 2. Related Work And Positioning
 
-The public baseline as of April 2026 is strong. Agent frameworks have matured rapidly. Tool protocols have become standard infrastructure. Benchmarks increasingly evaluate long-horizon web, computer-use, software-engineering, and tool-use tasks. Multi-agent systems have explored role decomposition, group chat, social simulation, and standard operating procedures.
+The public baseline as of April 2026 is strong. Agent frameworks have matured rapidly. Tool protocols have become standard infrastructure. Enterprise agent platforms increasingly expose governed deployment primitives. Benchmarks increasingly evaluate long-horizon web, computer-use, software-engineering, workplace, and tool-use tasks. Multi-agent systems have explored role decomposition, group chat, social simulation, and standard operating procedures.
 
-This paper does not claim those directions are wrong. It claims they operate mostly below the organizational layer.
+This paper does not claim those directions are wrong. They provide increasingly powerful execution, communication, governance, and deployment primitives, but public systems and benchmarks still rarely treat organization-level labor state as the primary unit of empirical evaluation.
+
+To our knowledge, this is an early field study to treat an AI-staffed organization's durable labor artifacts as the empirical unit of analysis, with bounded evidence for ownership, authority, no-action, manager closure, replay, and doctrine mutation.
 
 These systems improve execution. This paper studies institutional acceptance, authority, closure, no-action, replay, and doctrine mutation.
 
 ### 2.1 Agent SDKs And Execution Infrastructure
 
-OpenAI's Agents SDK and related agent tooling provide primitives for agents, tools, handoffs, guardrails, tracing, sandboxed execution, skills, and durable execution. OpenAI's April 2026 Agents SDK update describes a model-native harness, tool use through MCP, sandboxed execution, progressive disclosure through skills, and checkpoint-like restoration of agent state after environment loss [@openai2026agentsSdkEvolution]. The Agents SDK documentation describes tracing of model calls, tool calls, handoffs, and guardrails [@openai2026agentsSdkTracing], and guardrails around inputs, outputs, and custom function-tool invocations rather than a complete institutional authority model for all tool use [@openai2026agentsSdkGuardrails].
+OpenAI's Agents SDK and related agent tooling provide primitives for agents, tools, handoffs, guardrails, tracing, sandboxed execution, skills, and durable execution. OpenAI's April 2026 Agents SDK update describes a model-native harness, tool use through MCP, sandboxed execution, progressive disclosure through skills, and checkpoint-like restoration of agent state after environment loss [@openai2026agentsSdkEvolution]. The Agents SDK documentation describes tracing of model calls, tool calls, handoffs, and guardrails [@openai2026agentsSdkTracing], including input, output, and tool guardrails for custom function-tool invocations [@openai2026agentsSdkGuardrails].
 
-These are valuable execution primitives. They help developers run, observe, interrupt, and constrain agent workflows. They do not by themselves define whether a worker has authority to close a work item, whether a no-action outcome is valid, whether an old message is superseded, whether a verifier must accept or reroute an artifact, or where reusable learning must land.
+These are valuable execution and validation primitives: they help developers run, observe, interrupt, and constrain agent workflows. But they do not by themselves define whether a worker has authority to close a work item, whether a no-action outcome is valid, whether an old message is superseded, whether a verifier must accept or reroute an artifact, or where reusable learning must land.
 
 ### 2.2 Tool Protocols And MCP
 
-The Model Context Protocol standardizes tool and context integration for AI applications. The current MCP specification defines a JSON-RPC protocol with hosts, clients, servers, resources, prompts, tools, sampling, progress, cancellation, logging, and security considerations [@mcp2025specification]. Related 2025-11-25 specification material emphasizes schema conformance and protocol metadata [@mcp2025basicSpecification]. Recent MCP production-pattern work, published as a preprint, argues that production deployments still need additional mechanisms such as identity propagation, adaptive tool/timeout budgeting, and structured error semantics [@srinivasan2026bridgingProtocolProduction]. This report addresses a separate layer above tool integration: institutional authority, work ownership, verifier state, no-action, replay, and doctrine mutation.
+The Model Context Protocol, introduced by Anthropic as an open standard for connecting AI assistants to external data sources and tools, standardizes tool and context integration for AI applications [@anthropic2024modelContextProtocol]. The current MCP specification defines a JSON-RPC protocol with hosts, clients, servers, resources, prompts, tools, sampling, progress, cancellation, logging, and security considerations [@mcp2025specification]. Related 2025-11-25 specification material emphasizes schema conformance and protocol metadata [@mcp2025basicSpecification]. Anthropic later donated MCP to the Agentic AI Foundation, where it joined other agentic infrastructure projects under neutral stewardship [@anthropic2025mcpAaifDonation]. Recent MCP production-pattern work, published as a preprint, argues that production deployments still need additional mechanisms such as identity propagation, adaptive tool/timeout budgeting, and structured error semantics [@srinivasan2026bridgingProtocolProduction]. This report addresses a separate layer above tool integration: institutional authority, work ownership, verifier state, no-action, replay, and doctrine mutation.
 
-MCP is a major infrastructure layer, but a protocol for tool access is not an organization. It does not, by itself, decide that an execution employee may only act inside a risk-authorized envelope, that a reviewer can decline but not execute, that a manager alone may mutate durable doctrine, or that a message is stale because a governing work record has moved on. This paper positions organization-protocol semantics above MCP: employee identity, role authority, work state, doctrine, message lifecycle, verification, replay, and institutional mutation.
+MCP is a major infrastructure layer, but a protocol for tool access is not an organization. It does not, by itself, decide that an execution employee may only act inside a risk-authorized envelope, that a reviewer can decline but not execute, which role may mutate durable doctrine inside a human-owner governance boundary, or that a message is stale because a governing work record has moved on. This paper positions organization-protocol semantics above MCP: employee identity, role authority, work state, doctrine, message lifecycle, verification, replay, and institutional mutation.
 
-### 2.3 Durable Workflow And Multi-Agent Frameworks
+### 2.3 Enterprise Agent Platforms And Agent-To-Agent Protocols
+
+Recent enterprise agent platforms increasingly expose organizational controls such as sharing, permissions, approval gates, audit logs, observability, agent identity, and lifecycle management [@openai2026workspaceAgents; @googleCloud2026geminiEnterpriseAgents; @googleCloud2026agentIdentity; @microsoft2026copilotStudioAgentReadiness; @salesforce2026agentforcePlatform]. A2A standardizes inter-agent communication, discovery, and task coordination across heterogeneous agents and platforms [@google2025agent2agent; @linuxFoundation2025agent2agentProject]. These developments strengthen the premise that agentic work is becoming organizational. This report studies a narrower empirical layer: whether durable labor artifacts make ownership, authority, no-action, closure, replay, and doctrine mutation auditable in a live AI-staffed organization.
+
+### 2.4 Durable Workflow And Multi-Agent Frameworks
 
 LangGraph provides durable execution and persistence for long-running workflows, including human-in-the-loop and interruption recovery [@langchain2026langgraphDurableExecution]. CrewAI combines agents, crews, flows, tasks, guardrails, callbacks, triggers, persistence, and human-in-the-loop patterns [@crewai2026documentation]. AutoGen and related systems explore multi-agent conversations, teams, handoffs, and event-driven workflows [@wu2023autogen]. MetaGPT encodes standard operating procedures into prompt sequences and role-based agent collaboration for software work [@hong2023metagpt].
 
 These systems move beyond a single agent, but the primary abstraction remains workflow, team, or collaboration. An AI organization adds stronger semantics: not only that an agent handed off, but whether accountability moved to the correct owner; not only that a workflow resumed, but whether the governing work record is truthful; not only that a role exists, but whether the role owns or is forbidden from a decision; not only that an SOP was available, but whether reusable learning changed durable doctrine without losing prior constraints.
 
-### 2.4 Social Simulation And Agent Memory
+### 2.5 Social Simulation And Agent Memory
 
 Generative Agents demonstrated believable social behavior by storing natural-language experiences, synthesizing reflections, and retrieving memories to plan behavior in a simulated town [@park2023generativeAgents]. That line of work is important for humanlike interaction and social simulation. This paper takes a different stance: humanlike behavior is not the goal. Accountable institutional labor is the goal. A worker can be socially plausible while still failing to own, authorize, verify, close, or learn correctly.
 
-### 2.5 Agent Benchmarks And Evaluation
+### 2.6 Agent Benchmarks And Evaluation
 
-Agent benchmarks increasingly evaluate more realistic tasks. WebArena provides realistic web environments and long-horizon web tasks, reporting large gaps between agents and humans in early systems [@zhou2023webarena]. OSWorld evaluates computer-use agents in real desktop environments [@xie2024osworld]. SWE-bench evaluates whether language models can resolve real GitHub issues [@jimenez2023swebench]. Tau-bench evaluates tool-agent-user interaction in domains with policies and tools, emphasizing reliability over repeated trials [@yao2024taubench]. AgentBench evaluates LLMs as agents across multiple interactive environments [@liu2023agentbench], and TheAgentCompany moves closer to workplace labor by evaluating agents in a simulated software-company environment [@xu2024theagentcompany]. A survey of LLM-agent evaluation, submitted in 2025 and revised in 2026, identifies planning, tool use, memory, application benchmarks, generalist agents, cost-efficiency, safety, robustness, and scalable fine-grained evaluation as major themes [@yehudai2025surveyAgents].
+Agent benchmarks increasingly evaluate more realistic tasks. WebArena provides realistic web environments and long-horizon web tasks, reporting large gaps between agents and humans in early systems [@zhou2023webarena]. OSWorld evaluates computer-use agents in real desktop environments [@xie2024osworld]. SWE-bench evaluates whether language models can resolve real GitHub issues [@jimenez2023swebench]. Tau-bench evaluates tool-agent-user interaction in domains with policies and tools, emphasizing reliability over repeated trials [@yao2024taubench]. AgentBench evaluates LLMs as agents across multiple interactive environments [@liu2023agentbench], and TheAgentCompany moves closer to workplace labor by evaluating agents in a simulated software-company environment [@xu2024theagentcompany]. WorkArena and WorkArena++ further move agent evaluation toward enterprise knowledge work, but still primarily evaluate task completion rather than institutional state, authority, closure, and learning destinations [@drouin2024workarena; @boisvert2024workarenaPlus]. A survey of LLM-agent evaluation, submitted in 2025 and revised in 2026, identifies planning, tool use, memory, application benchmarks, generalist agents, cost-efficiency, safety, robustness, and scalable fine-grained evaluation as major themes [@yehudai2025surveyAgents].
 
 These benchmarks strengthen the shift from static task evaluation toward agentic and workplace task performance. This report asks a different question: whether AI labor is owned, authorized, closed, stopped, replayed, and mutated as institutional state. An agent can pass a task benchmark while still failing organizationally; conversely, an organization can correctly stop a task that a benchmark might treat as incomplete.
 
-### 2.6 Business Process Management And Process Mining
+### 2.7 Business Process Management And Process Mining
 
 Business process management and process-mining systems model tasks, events, handoffs, conformance, and process improvement [@dumas2018fundamentalsBpm; @vanDerAalst2016processMining]. This report is related, but the control problem differs because probabilistic AI workers require explicit role authority, evidence demotion, message freshness, valid no-action, verifier acceptance, and replay-to-doctrine mutation around model calls.
 
-### 2.7 Institutions, Norms, And Agent Governance
+### 2.8 Institutions, Norms, And Agent Governance
 
 The paper also sits in a longer multi-agent systems tradition. Normative multi-agent systems study how norms, roles, enforcement, and compliance shape autonomous-agent interaction [@boella2006normativeMultiagentSystems]. Electronic institutions make conventions explicit for open multi-agent systems and use institutional artifacts to shape participation and compliance [@esteva2004electronicInstitutions].
 
@@ -132,23 +138,25 @@ Recent LLM-agent governance preprints and specifications are closer still. Insti
 
 This paper is complementary. It does not propose a formal admission-control protocol or a governance graph. It brings the institutional lens to empirical AI labor: work records, messages, role authority, verifier topology, no-action, closure, replay, and doctrine mutation in a live operational desk.
 
-### 2.8 Organizational Learning And High-Reliability Work
+### 2.9 Organizational Learning And High-Reliability Work
 
 Organizational-learning and high-reliability work study how institutions convert operational experience into procedures, roles, checks, and routines [@argyrisSchon1978organizationalLearning; @weickSutcliffe2015managingUnexpected]. This report adapts that lens to AI labor: replay records, role/playbook versions, doctrine patches, verifier gates, tool-parity repairs, and activation messages are treated as AI-native organizational-learning artifacts.
 
 We use organizational-learning and high-reliability work as positioning lenses, not as evidence that this deployment achieved high-reliability-organization status. The mechanism claim is narrower: durable learning must land in institutional artifacts rather than remaining in private memory, one-off reflection, chat, or ticket commentary.
 
-### 2.9 Positioning Summary
+### 2.10 Positioning Summary
 
 | Public baseline | What it provides | Organization-level gap addressed here |
 | --- | --- | --- |
 | Agent SDKs | tools, handoffs, guardrails, tracing, sandboxing | durable authority, closure, doctrine, no-action, replay |
 | MCP | standardized tool/resource/prompt access | employee identity, work ownership, role authority, verifier state |
+| A2A / agent-to-agent protocols | agent discovery, communication, and task coordination | institutional ownership, authority, closure, replay, and mutation semantics |
+| Enterprise agent platforms | sharing, permissions, approvals, governance, observability, agent scaling | durable empirical labor artifacts for ownership, no-action, closure, replay, doctrine mutation |
 | Workflow graphs | persistence, routing, interrupts | organizational truth, manager finality, institutional mutation |
 | BPM and process mining | task/event models, handoffs, conformance, process improvement | AI-specific authority, evidence demotion, no-action, and replay-to-doctrine mutation |
 | Multi-agent teams | collaboration and role decomposition | authority contracts, stateful handoffs, accepted closure |
-| SOP agents | procedural decomposition | versioned doctrine, targeted mutation, recurrence checks |
 | Agent benchmarks | task success in environments | organization-level auditability and learning |
+| Workplace-agent benchmarks | workplace-like task performance | organization-level state and learning evidence |
 | Institutional AI / ACP | formal governance graphs, admission control, auditability | empirical labor records, closure, no-action, replay, doctrine mutation |
 | Organizational learning and high-reliability work | experience-to-routine learning and resilience practices | machine-executable replay, versioned doctrine, and activation-gated mutation |
 
@@ -231,7 +239,7 @@ human-owner boundary
   -> employee principal + role contract
   -> playbook doctrine
   -> governing work record
-  -> message / inbox trigger
+  -> message trigger + freshness gate
   -> evidence packet + verifier gate
   -> closure / no-action / replay / mutation
 ```
@@ -256,7 +264,7 @@ The empirical study is organized around five propositions.
 
 ### 4.1 Empirical Setting
 
-The empirical setting is an AI-staffed prediction-market desk working in weather and climate markets. The organization performed research, evidence collection, market-path selection, risk review, execution or no-action decisions, manager closure, and replay. It was AI-staffed in daily operational labor and human-owned at the level of goals, risk boundaries, institutional design, and publication judgment.
+The empirical setting is an AI-staffed prediction-market desk working in weather and climate markets. The organization performed research, evidence collection, market-path selection, risk review, execution or no-action decisions, manager closure, and replay. It was AI-staffed for daily operational labor and human-owned for goals, risk boundaries, and outer governance.
 
 The domain is useful because it stresses several properties common to high-skill technical work:
 
@@ -314,6 +322,16 @@ This report uses sanitized extraction summaries, not raw internal records. A fir
 This is a field study and mechanism paper. It does not claim general causal certainty. It identifies recurring organizational failure modes and the control mechanisms that made them observable, bounded, or repairable.
 
 The deployment context is summarized below. The full corpus is not used as a denominator in this report; bounded counts are reported only for selected windows with enough sanitized evidence to code the relevant fields.
+
+The evidence hierarchy is:
+
+| Evidence class | What it supports | What it does not support |
+| --- | --- | --- |
+| S1 bounded audit | ownership, closure, no-action, replay visibility | global rates or correctness |
+| P1/B1 spot-checks | selection-bias context | random-sample inference |
+| M1 message packets | false-motion and freshness mechanisms | inbox-wide loop rate |
+| Verifier comments | repair, approval, reroute, decline mechanisms | full verifier-quality rate |
+| Case studies | mechanism tracing | recurrence reduction |
 
 | Deployment attribute | Value |
 | --- | --- |
@@ -373,6 +391,8 @@ To reduce the risk that the paper only reports clean mature-state windows, we ad
 
 Records were coded from work-record metadata and description snippets only. A field counted as clear only when the record exposed the relevant owner, next action or blocker, closure state, verifier state, replay/no-replay state, or no-action state without needing private comment-thread context. These codes measure state visibility, not decision correctness.
 
+Owner-present coding means the record exposed the accountable current owner for the next institutional step; it does not mean other employees were free to act on that work.
+
 | Sample | Records | Owner present | Next clear | Closure clear | Verifier clear | Replay clear | No-action clear |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | `P1` reference spot-check | 30 | 21/30 | 18/30 | 22/30 | 10/18; N/A 12 | 8/14; N/A 16 | 6/13; N/A 17 |
@@ -385,27 +405,17 @@ For S1, verifier clear refers to manager-reviewed final dispositions; replay cle
 
 The organization evolved through a sequence of intervention families. The important point is not exact calendar chronology; it is the failure pressure that caused each durable layer to emerge. The organization did not become more controlled through one design insight. Each institutional layer appeared after concrete failure pressure made the previous agent/team abstraction insufficient.
 
-The timeline should be read as institutional growth from failure pressure into durable artifact forms. Role forms answered persona drift. Work-record fields answered chat-as-state. Message rules answered missed activation and false motion. Verifier forms answered plausible-but-unauthorized artifacts. Replay forms answered learning trapped in tickets or private context.
+The timeline should be read as institutional growth from failure pressure into durable artifact forms.
 
-| Stage | Failure pressure | Intervention | Changed durable layer | Evidence status |
-| --- | --- | --- | --- | --- |
-| T0 | Useful specialist agents lacked stable ownership and closure | Persistent AI employees | employee principal, role, inbox | source-backed mechanism evidence |
-| T1 | Roles blurred recommendation, approval, execution, closure, and doctrine editing | Role contracts | role text and role families | extracted |
-| T2 | Lessons stayed in tickets, messages, or memory | Playbooks as doctrine | playbook versions | extracted |
-| T3 | Conversation appeared to own truth | Governing work records | workboard state | extracted |
-| T4 | Assignment or comments did not reliably wake employees | Direct work messages | message protocol | extracted |
-| T5 | Employees could act on stale messages | Inbox pre-check and suppression | runtime contract, inbox tools, messages | extracted |
-| T6 | AI workers could self-certify plausible artifacts | Verifier topology | roles, playbooks, gates | extracted |
-| T7 | Complete work remained open or review-ready without closure | Manager verification queue | workboard, manager role, runtime contract | extracted |
-| T8 | Agents over-produced action | No-action states | review gates and work states | extracted |
-| T9 | Live work stayed fake-active while awaiting delayed outcome truth | Replay split | workboard and replay records | extracted |
-| T10 | Reflection remained commentary | Replay-to-mutation loop | mutation destinations | extracted |
-| T11 | Long doctrine rewrites risked compression and drift | Targeted doctrine patches | role and playbook tools | mechanism evidence; bounded counts not reported |
-| T12 | Capability and authority were confused | Dual tool plane and tool parity | tool registry and role authority | extracted |
-| T13 | More employees increased routing ambiguity | Pods and role families | organization topology | extracted |
-| T14 | Fixes landed in the wrong layer or were not activated | Adaptive institution loop | institutional mutation process | extracted |
+| Failure pressure | Durable artifact form | Evidence status |
+| --- | --- | --- |
+| Persona drift | role contract and role family | extracted mechanism |
+| Chat-as-state | work-record fields | bounded S1 plus mechanism evidence |
+| False motion | message freshness and no-reply rule | M1 plus S1 |
+| Plausible artifact without authority | verifier decision form | S1 verifier comments |
+| Learning trapped in retro | replay and doctrine destination | S1 retro plus mechanism evidence |
 
-Replay-to-mutation destinations can include roles, playbooks, tools, staffing, topology, workboards, or messages; the table uses the compact label `mutation destinations`.
+The full T0-T14 intervention timeline is reported in Appendix I. The main text keeps the compressed failure-to-artifact map because it is the mechanism most relevant to the paper's thesis.
 
 The same history can be summarized as a 0-to-1 evolution arc from weak agent-team forms to institutional-control forms:
 
@@ -418,17 +428,6 @@ The same history can be summarized as a 0-to-1 evolution arc from weak agent-tea
 | Tools/MCP | capability surface | person-role-aware authority surface |
 | Harness | task prompt | common employee runtime contract |
 | Organization | many agents | routable topology with finality and adaptation |
-
-The intervention logic is summarized as a before/after mechanism table. The "after" column describes the mature institutional mechanism observed in bounded samples or mechanism evidence; it does not claim corpus-wide performance improvement.
-
-| Failure pressure | Before institutional control | After institutional control | Evidence type | What this does not prove |
-| --- | --- | --- | --- | --- |
-| Completion confused with closure | Work could appear done while still open or review-ready. | Manager closeout required a final state or named dependency. | S1 closeout audit | Does not prove a global closure-validity rate. |
-| Review as commentary | Reviewer feedback could refine prose without creating an authority state. | Verifiers made accept, repair, reroute, decline, or review decisions. | S1 verifier comments | Does not establish all reviews got better. |
-| Message false motion | Replies and self-triggers could repeat without changing work truth. | No-reply and stale-message suppression became valid outcomes. | M1 packets and S1 closeouts | Does not prove loop elimination. |
-| Broad intent without executable frontier | A high-level sprint request could leave routing, owner, gate, and replay obligations implicit. | The workboard compiled intent into live umbrella, retro umbrella, child paths, direct activations, gate states, closeout, and replay. | S1/R1/V1 sprint structure and workboard evolution | Does not prove this topology is optimal. |
-| Delayed outcome truth | Learning could stay in chat, tickets, or worker context. | Replay classified closure, outcome truth, and learning destination. | S1 replay records | Does not prove recurrence reduction. |
-| Tool access mistaken for authority | Tool visibility or proposal generation could imply actionability. | Execution required role authority and verifier gates. | Mechanism cases | Does not establish complete execution control. |
 
 ### 4.9 Evidence Claim Labels
 
@@ -476,17 +475,21 @@ The organization used a **common employee runtime contract** for employee cycles
 employee cycle =
   trigger
   + authority
+  + freshness
   + doctrine
   + governing record
+  + evidence
   + one authorized action
   + audit outcome
 ```
 
-The contract frames the model as an employee, not as the system of record. A substantive cycle starts from an inbound message, identifies the governing work record, checks authority and evidence, reads relevant doctrine, verifies whether the trigger is still actionable, takes one authorized next step, and leaves a fixed planning/execution stamp with exactly one primary outcome.
+Freshness means the employee checks whether the trigger is still actionable, already completed, or superseded before taking a step.
+
+The contract frames the model as an employee, not as the system of record. A substantive cycle starts from an inbound message, identifies the governing work record, checks authority, freshness, and evidence, reads relevant doctrine, takes one authorized next step, and leaves a fixed planning/execution stamp with exactly one primary outcome.
 
 A worker cycle was also bounded against backlog sweeping: one trigger had to end in one authorized outcome, not opportunistic cleanup of adjacent work.
 
-The key runtime move is an authority lattice plus evidence demotion. The employee does not treat all retrieved text as instruction. Role text, playbooks, work records, messages, comments, tool outputs, and copied material answer different institutional questions.
+The key runtime move is an authority lattice plus evidence demotion. In the studied deployment, authority was ordered from owner instruction and immutable runtime contract, to role text, playbooks, governing work records, and finally messages, comments, retrieved content, and tool outputs as evidence. The employee does not treat all retrieved text as instruction. Role text, playbooks, work records, messages, comments, tool outputs, and copied material answer different institutional questions.
 
 **Truth-layer separation:** role text owns authority, playbooks own reusable procedure, work records own case truth, messages own activation, and replay owns outcome learning.
 
@@ -504,15 +507,15 @@ The key runtime move is an authority lattice plus evidence demotion. The employe
 | Durable instruction layers | Role, playbook, and work record own different kinds of truth. | Case facts leak into doctrine, or doctrine remains trapped in tickets. |
 | Governing work record | Every substantive cycle anchors to persistent case truth. | Conversation becomes the system of record. |
 | Inbound-message trigger | Work transfer depends on explicit activation. | Assignment fields or mentions silently fail to wake employees. |
-| Inbox staleness gate | The trigger is classified as actionable, superseded, or already done. | Duplicate replies, stale writes, and state-sync loops. |
+| Freshness gate | The trigger is classified as actionable, superseded, or already done. | Duplicate replies, stale writes, and state-sync loops. |
 | Planning/execution split | No substantive action before work, authority, state, doctrine, and next step are known. | Execution begins before authority or playbook review. |
 | Explicit handoff and silence | Handoffs name owner/action/reply expectation; no-message is valid when no action remains. | Awareness is mistaken for transfer; acknowledgments create false motion. |
-| Manager-only mutation | Durable people and doctrine changes require manager authority. | Tool access becomes institutional authority. |
+| Manager-employee authorized mutation | Durable people and doctrine changes require manager-employee authority inside the human-owner governance boundary. | Tool access becomes institutional authority. |
 | Fixed stamps and primary outcomes | The governing record receives planning fields, execution fields, and one outcome class. | Agent traces exist, but organizational state remains unauditable. |
 
 The paper treats this contract as a portable organization-protocol concept. It can be implemented with different tools, workboards, and model stacks. Its core contribution is semantic: in this deployment, worker cycles were more auditable and controllable when constrained by authority, state, doctrine, trigger discipline, review, no-action, replay, mutation, and audit rules.
 
-The runtime contract let the organization operate with incomplete doctrine without collapsing into chat. Each cycle still had to locate governing state, respect authority order, demote messages and tool outputs to evidence unless adopted by higher authority, take one authorized next step, and leave audit state. As repeated failures exposed missing structure, managers and owners could promote fixes into role contracts, playbooks, work-record fields, message rules, verifier gates, replay doctrine, or tool surfaces. This is evidence of institutional form maturation in one deployment, not proof of general autonomous self-improvement.
+The runtime contract let the organization operate with incomplete doctrine without collapsing into chat. Each cycle still had to locate governing state, respect authority order, demote messages and tool outputs to evidence unless adopted by higher authority, check freshness, take one authorized next step, and leave audit state. As repeated failures exposed missing structure, the manager employee could promote fixes into role contracts, playbooks, work-record fields, message rules, verifier gates, replay doctrine, or tool surfaces inside the human-owner governance boundary. This is evidence of institutional form maturation in one deployment, not proof of unconstrained self-modification or recurrence reduction.
 
 ### 5.2 Employee Principals
 
@@ -652,7 +655,7 @@ Figure 5. Work Item Lifecycle.
 
 ```text
 trigger received
-  -> inbox state: actionable / superseded / already done
+  -> freshness state: actionable / superseded / already done
   -> governing record identified
   -> planning gate: authority + doctrine + evidence
   -> primary outcome:
@@ -720,11 +723,11 @@ The tool surface was split into two planes:
 
 The important idea is not the particular implementation. It is that organization-grade tool use must be interpreted through employee identity, role authority, governing work state, and doctrine. MCP-style tools expose capability. An organization layer decides when that capability may be used and what durable state change it creates.
 
-In this sense, the tool surface functioned as an executable authority model. An authenticated employee principal entered the organization through a caller-dependent surface: ordinary employees could read profiles, inspect inboxes, read playbooks, message coworkers, and perform assigned work; managers or owner-level callers could perform durable administration such as role edits, tool-set changes, hiring, termination, and playbook mutation. Profile, role, tool-set, inbox, work-record, and playbook reads were intentionally separated because each surface answers a different authority question.
+In this sense, the tool surface functioned as an executable authority model. An authenticated employee principal entered the organization through a caller-dependent surface: ordinary employees could read profiles, inspect inboxes, read playbooks, message coworkers, and perform assigned work; the manager-employee surface exposed scoped institutional mutation capabilities such as role edits, tool-set changes, hiring, termination, and playbook mutation. The human owner remained the outer governance authority. Profile, role, tool-set, inbox, work-record, and playbook reads were intentionally separated because each surface answers a different authority question.
 
 The table abstracts the public-facing surface into institutional semantics; it is not a complete tool inventory.
 
-| Surface | Regular employee | Manager / owner | Institutional meaning |
+| Surface | Regular employee | Manager employee / human owner | Institutional meaning |
 | --- | --- | --- | --- |
 | Profile / role reads | yes | yes | identity and authority are inspectable |
 | Inbox / message tools | yes | yes | communication is work activation |
@@ -740,14 +743,14 @@ A sanitized authority example is:
 
 ```text
 Employee state: can inspect evidence and draft a recommendation
-Tool capability: can see an action-capable work surface
-Role authority: cannot authorize downstream execution
-Required gate: verifier acceptance and authorized envelope
+Work-tool assignment: provides the tools needed for this role's assigned work
+Role authority: cannot authorize downstream execution or closure
+Required gate: verifier acceptance and authorized execution envelope
 Valid outcome: record needs-review or handoff state; message the authorized next owner
-Invalid outcome: execute because the tool surface made action technically possible
+Invalid outcome: treat evidence access or work-tool access as permission to execute
 ```
 
-This is the concrete version of "tool access is not authority." Capability is a necessary substrate, but the valid state mutation depends on role, work record, verifier gate, and manager or owner boundary.
+This is the concrete version of "tool access is not authority." The institutional surface assigns the tools needed for a role's work, while the valid state mutation still depends on the employee principal, role contract, governing work record, verifier gate, and manager-employee authority boundary.
 
 ## 6. Evaluation Framework
 
@@ -761,24 +764,24 @@ It deliberately avoids using profit, number of employees, number of tools, promp
 
 The metrics are not task-success metrics. They are institution-state metrics: they ask whether the organization made the right work truth visible and actionable.
 
-Metric status is reported in four tiers: `defined` means the metric is conceptually specified; `extractable` means source artifacts are known but no denominator-labeled value is reported; `mechanism evidence extracted` means sanitized cases support the mechanism; `bounded value extracted` means this report includes a numerator, denominator, sample label, and window. No denominator means no bounded value.
+Metric status is reported in four tiers: `defined` means the metric is conceptually specified; `extractable` means source artifacts are known but no denominator-labeled value is reported; `mechanism evidence extracted` means sanitized cases support the mechanism; `bounded value extracted` means Section 7 reports a numerator, denominator, sample label, and window. No denominator means no bounded value.
 
-| Metric | What it checks | Evidence/status | Current reported value | Main limitation |
-| --- | --- | --- | --- | --- |
-| Ownership validity | owner and next action/blocker | P1/B1 spot-checks; S1 closeouts; bounded value extracted | P1 late-Mar/early-Apr: 21/30 owner, 18/30 next; S1 Apr 26: 20/20 both; B1 non-S1/R1/V1: 62/75 owner, 51/75 next | P1/B1 shallow; S1 selected |
-| Authority compliance | role, doctrine, owner/manager, and state permission | mechanism evidence extracted | no rate reported | mechanism evidence only |
-| Evidence sufficiency | packet reviewability | mechanism evidence extracted | repairs and declines observed; no packet census | no denominator |
-| Verifier gate quality | stateful accept, repair, reroute, decline, or review | mechanism evidence extracted | S1 lower bounds: at least 16 approvals and at least 10 repairs | lower bounds, not rates |
-| Closure validity | authority-accepted final state | S1 closeouts; bounded value extracted | S1 Apr 26: 20/20 manager-reviewed; 0/20 complete-but-open | selected window |
-| Workboard frontier validity | parent, child, activation, closure, and replay state agreement | mechanism evidence extracted | no rate reported | duplicate-parent case is not denominator-coded |
-| No-action quality | evidence basis and no-replay treatment | S1 no-execution paths; bounded value extracted | S1 Apr 26: 6/6 | selected window; not correctness |
-| Message trigger auditability | exact ask, reply flag, and stale suppression | M1 packets, S1 closeouts, and S1 live umbrella; mechanism evidence extracted | S1 Apr 26: 10 direct activation messages recorded for 20 child records; S1 Apr 26: 20/20 final closeouts sent no downstream message when no action remained; M1 packet examples show stale/no-change suppression | S1 activation count comes from workboard/umbrella evidence, not a full raw inbox census |
-| Replay completion | replay or no-replay rationale | S1 replay/final records; bounded value extracted | S1 Apr 26: 14/14 replay closed; 6/6 no-replay | no recurrence rate |
-| Topology routability | lane, chain, tool surface, and activation path identify owner | mechanism evidence extracted | no rate reported | mechanism evidence only |
-| Tool parity | required tool surface before activation | mechanism evidence extracted | no denominator or time-to-parity value | mechanism-level evidence only; no bounded estimate reported |
-| Durable mutation latency | time from learning to durable-layer change | defined | no value reported | defined but not estimated in this study |
-| Recurrence after mutation | same failure after activated change | defined | no value reported | defined but not estimated in this study |
-| Human intervention burden | owner or human repair frequency | mechanism evidence extracted | S1 includes one opening owner directive; no rate | not global burden |
+| Metric | What it checks | Evidence/status | Main limitation |
+| --- | --- | --- | --- |
+| Ownership validity | owner and next action/blocker | P1/B1 spot-checks; S1 closeouts; bounded value extracted | P1/B1 shallow; S1 selected |
+| Authority compliance | role, doctrine, owner/manager, and state permission | mechanism evidence extracted | mechanism evidence only |
+| Evidence sufficiency | packet reviewability | mechanism evidence extracted | no denominator |
+| Verifier gate quality | stateful accept, repair, reroute, decline, or review | mechanism evidence extracted | lower bounds, not rates |
+| Closure validity | authority-accepted final state | S1 closeouts; bounded value extracted | selected window |
+| Workboard frontier validity | parent, child, activation, closure, and replay state agreement | mechanism evidence extracted | duplicate-parent case is not denominator-coded |
+| No-action quality | evidence basis and no-replay treatment | S1 no-execution paths; bounded value extracted | selected window; not correctness |
+| Message trigger auditability | exact ask, reply flag, and stale suppression | M1 packets, S1 closeouts, and S1 live umbrella; mechanism evidence extracted | S1 activation coverage comes from workboard/umbrella evidence, not a full raw inbox census |
+| Replay completion | replay or no-replay rationale | S1 replay/final records; bounded value extracted | no recurrence rate |
+| Topology routability | lane, chain, tool surface, and activation path identify owner | mechanism evidence extracted | mechanism evidence only |
+| Role-family activation readiness | required role, work-tool, routing, and activation agreement | mechanism evidence extracted | mechanism-level evidence only; no bounded estimate reported |
+| Durable mutation latency | time from learning to durable-layer change | defined | defined but not estimated in this study |
+| Recurrence after mutation | same failure after activated change | defined | defined but not estimated in this study |
+| Human intervention burden | owner or human repair frequency | mechanism evidence extracted | not global burden |
 
 Appendix H records detailed evidence status and coding guidance for metrics this study defines but does not estimate. The main Results section keeps only denominator-labeled counts and short evidence-basis notes.
 
@@ -788,16 +791,26 @@ This section reports defensible findings from extracted evidence. It does not in
 
 The Results section measures institutional auditability and controllability, not trading performance, forecasting accuracy, or global decision quality. Counts are reported only for bounded windows with denominator-labeled extraction. Where evidence is qualitative or mechanism-level, the text does not infer aggregate rates.
 
-Across extracted mechanism packets, institutional state changed downstream behavior in ways that ordinary record-completeness tables do not fully show:
+Results at a glance:
 
-| Pillar | Mechanism | Observed behavior change | Evidence type | Claim type | Limitation |
+| Result family | Main bounded evidence | What it shows | What it does not show |
+| --- | --- | --- | --- |
+| Ownership and next action | P1: 21/30 owner, 18/30 next; S1: 20/20 both; B1: 62/75 owner, 51/75 next | mature S1 made ownership and next-step state explicit | full-corpus rate or correctness |
+| Closure | S1: 20/20 manager-reviewed; 0/20 complete-but-open after final closeout | completion was separated from accepted closure | global closure-validity rate |
+| No-action | S1: 6/6 no-execution paths with explicit rationale/no-replay treatment | stopping became an auditable output | outcome correctness |
+| Replay | S1: 14/14 executed paths replay-closed | delayed outcome truth stayed linked to live work | recurrence reduction |
+| Communication | S1: direct activation recorded for 20/20 child records; M1: stale/no-change suppression examples | handoff and silence became auditable | inbox-wide loop rate |
+
+Across extracted mechanism packets, institutional state made downstream decisions and transitions auditable in ways that ordinary record-completeness tables do not fully show:
+
+| Pillar | Mechanism | Auditable decision or transition | Evidence type | Claim type | Limitation |
 | --- | --- | --- | --- | --- | --- |
 | State | Manager closure | Apparently complete work was kept open, rerouted, or closed only after final disposition. | S1 closeout audit | bounded metric | selected mature window |
 | Authority | Verifier gate | Approval, repair, decline, reroute, and changed execution envelope became state decisions. | S1 verifier comments | mechanism evidence | lower bounds, not rates |
-| Communication | Message staleness | No-change and superseded triggers were suppressed before action. | M1 packet examples | extracted mechanism | not inbox census |
+| Communication | Message freshness | No-change and superseded triggers were suppressed before action. | M1 packet examples | extracted mechanism | not inbox census |
 | State | Workboard compilation | Broad intent became child paths, gates, activations, and replay obligations. | S1/R1/V1 sprint structure | mechanism evidence | no corpus-wide rate |
 | Learning | Replay classification | Live closure, no-replay rationale, and doctrine follow-up were separated. | S1 replay and retro records | bounded metric | no recurrence rate |
-| Authority | Tool-parity-gated activation | Activation waited until role, tool, routing, and activation surfaces aligned. | Case I mechanism evidence | extracted mechanism | no recurrence or safety claim |
+| Authority | Activation-gated role-family expansion | Activation waited until role, tool, routing, and activation surfaces aligned. | Case I mechanism evidence | extracted mechanism | no recurrence or safety claim |
 
 ### 7.1 Finding 1: State Control Made Work Truth Auditable
 
@@ -805,14 +818,14 @@ Across extracted mechanism packets, institutional state changed downstream behav
 
 State control converted ambiguous conversational residue into auditable institutional state. Work that looked substantively complete still required an accepted final state, named dependency, reroute, or explicit no-action treatment on the governing record.
 
-A bounded runtime-contract compliance audit on the S1 final manager-closeout sample found that 20/20 final closeout records included fixed planning and execution stamps, inbox check state, materially relevant playbooks read, exactly one primary outcome, next owner/action fields, and a messages-sent field. In the same sample, 20/20 final manager closeouts sent no direct message when no downstream action remained, and 6/6 final no-execution paths were audited as valid no-action with explicit no-replay treatment. These are not global rates; they show that the mature contract made closure, no-action, and silence visible on the governing record.
+A bounded runtime-contract compliance audit on the S1 final manager-closeout sample found that 20/20 final closeout records included fixed planning and execution stamps, freshness state, materially relevant playbooks read, exactly one primary outcome, next owner/action fields, and a messages-sent field. In the same sample, 20/20 final manager closeouts sent no direct message when no downstream action remained, and 6/6 final no-execution paths were audited as valid no-action with explicit no-replay treatment. These are not global rates; they show that the mature contract made closure, no-action, and silence visible on the governing record.
 
 These presence metrics measure record completeness and auditability, not decision correctness. A field was counted when it was present in the fixed record structure; the count does not by itself prove the underlying decision was correct.
 
 | Runtime-contract compliance field | S1 final closeout denominator | Count |
 | --- | --- | --- |
 | Planning and execution stamps present | 20 final closeout records | 20/20 |
-| Inbox state, playbooks read, primary outcome, next owner/action, and messages-sent fields present | 20 final closeout records | 20/20 |
+| Freshness state, playbooks read, primary outcome, next owner/action, and messages-sent fields present | 20 final closeout records | 20/20 |
 | Final closeouts with no direct message sent when no action remained | 20 final closeout records | 20/20 |
 | No-execution paths audited as valid no-action | 6 final no-execution paths | 6/6 |
 
@@ -858,20 +871,20 @@ Authority control also constrained execution. A proposed action was not executab
 
 **Evidence basis:** mechanism evidence plus bounded closeout counts.
 
-Communication control made false motion suppressible. Duplicate state sync, no-change updates, waiting loops, fake-active live work, stale parent umbrellas, and broad sprint triggers can all look like activity while failing to change organizational truth; the message protocol and inbox checks made no-reply, stale suppression, and narrowed activation auditable outcomes.
+Communication control made false motion suppressible. Duplicate state sync, no-change updates, waiting loops, fake-active live work, stale parent umbrellas, and broad sprint triggers can all look like activity while failing to change organizational truth; the message protocol and freshness checks, using scoped inbox context, made no-reply, stale suppression, and narrowed activation auditable outcomes.
 
 | Metric | Status | Value |
 | --- | --- | --- |
 | Manager-review messages with no-reply expectation | S1 closeout records plus message packet sample | Observed as a closeout pattern; no global inbox rate claimed |
 | Closeouts with no direct message sent | S1 live child manager closeouts | 20/20 |
-| Direct activation messages | S1 live umbrella | 10 direct activation messages recorded for 20 child records |
+| Direct activation coverage | S1 live umbrella | 20/20 child records direct-activated |
 | Self-trigger no-change suppressions | 260-row inbox packet sample | 1 sanitized packet |
 | Superseded/stale unauthorized-message suppressions | 260-row inbox packet sample | 2 sanitized packets |
 | Broad sprint triggers narrowed into child activations | S1/R1/V1 sprint structure | Mechanism observed; no corpus-wide rate claimed |
 
 **Limitation.** These examples show false-motion suppression in bounded samples; they do not establish loop elimination.
 
-The S1 live umbrella recorded 10 direct activation messages for 20 child records; this supports the claim that handoff was treated as an activation event, not merely assignment metadata. The activation count comes from workboard/umbrella evidence, not a full raw inbox census.
+The S1 live umbrella recorded direct activation for 20/20 child records; this supports the claim that handoff was treated as an activation event, not merely assignment metadata. The activation coverage comes from workboard/umbrella evidence, not a full raw inbox census.
 
 ### 7.4 Finding 4: Learning Control Separated Stopping, Replay, And Doctrine Change
 
@@ -918,22 +931,24 @@ This finding is reported as mechanism evidence, not a topology-performance resul
 
 **Limitation.** These are topology mechanisms observed in one organization; the report does not measure topology performance or claim a generally optimal structure.
 
-## 8. Mechanism Case Studies
+## 8. Anchor Mechanism Cases
 
 The case studies use sanitized labels. They are organized to show the main institutional-control mechanisms across state, authority, communication, and learning, not private operational details.
 
-| Case | Failure | Org diagnosis | Interv. | Changed artifact | Claim type | Evidence basis | Limitation |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| A | complete but open | closure invalid | manager queue | workboard, manager role | bounded metric | S1 closeout audit | no full before/after rate |
-| B | stale or duplicate triggers | message lifecycle failure | inbox pre-check | message protocol | extracted mechanism | M1 packets, S1 closeouts | not inbox census |
-| C | plausible prose | artifact and action gates collapsed | packet and action gates | playbook, verifier role | extracted mechanism | verifier comments | domain fields abstracted |
-| D | doctrine drift risk | durable-law mutation risk | anchored patch | role and playbook tools | mechanism evidence | sanitized patch pattern | no cost, error, or recurrence claim |
-| E | lesson trapped in retro | wrong landing layer | replay classification | replay and doctrine process | extracted mechanism | replay and retro records | no recurrence rate |
-| F | unclear routing | not routable | role lanes | topology | extracted mechanism | topology cases | no optimum claim |
-| G | replay without patch | learning gap visible | negative replay classification | replay record | negative mechanism | S1 retro closeout | no immediate mutation |
-| H | broad sprint ask | frontier not compiled | child-path structure | workboard | extracted mechanism | sprint structure | selected windows only |
-| I | activation with parity gap | surfaces not aligned | activation gate | role, tool, routing, activation surfaces | extracted mechanism | tool-parity activation case | no recurrence or safety claim |
-| J | repeated local fixes | correction not institutionalized | authorized artifact promotion | role, work, message, verifier, replay, tool, and playbook forms | mechanism synthesis | cases | no recurrence claim |
+The main body keeps five anchor cases that cover the paper’s central mechanisms; additional cases are retained in Appendix J for completeness.
+
+| Case | Location | Mechanism | Claim type | Evidence basis | Limitation |
+| --- | --- | --- | --- | --- | --- |
+| A | main | manager closure for complete-but-open work | bounded metric | S1 closeout audit | no full before/after rate |
+| B | Appendix J | message freshness and no-reply suppression | extracted mechanism | M1 packets, S1 closeouts | not inbox census |
+| C | main | verifier-reconstructible artifact and action gate | extracted mechanism | verifier comments | domain fields abstracted |
+| D | Appendix J | targeted doctrine patching | mechanism evidence | sanitized patch pattern | no cost, error, or recurrence claim |
+| E | main | replay-to-mutation classification | extracted mechanism | replay and retro records | no recurrence rate |
+| F | Appendix J | adaptive topology, role, tool, and staffing change | extracted mechanism | topology cases | no optimum claim |
+| G | Appendix J | replay without immediate durable mutation | negative mechanism | S1 retro closeout | no immediate mutation |
+| H | main | sprint compilation into child-path work | extracted mechanism | sprint structure | selected windows only |
+| I | Appendix J | role-family capacity expansion with activation gating | extracted mechanism | capacity case | no recurrence or safety claim |
+| J | main | durable artifact growth from repeated local fixes | mechanism synthesis | Cases A-I, Appendix I intervention timeline, and runtime/tool-surface evidence | no recurrence claim |
 
 ### 8.1 Case A: Manager Verification Queue And Atomic Closeout
 
@@ -951,23 +966,7 @@ The case studies use sanitized labels. They are organized to show the main insti
 
 **Limitation.** Available evidence supports the mechanism but does not include a full before/after closure-validity rate.
 
-### 8.2 Case B: Message Trigger Discipline And Stale/No-Reply Suppression
-
-**Initial failure.** Assignments, comments, and tracker fields did not reliably wake the correct employee. Later, direct messages themselves created a new problem: old or duplicate messages could cause repeated review, acknowledgment loops, or no-change state churn.
-
-**Organization diagnosis.** Multi-agent chat treats communication as collaboration. The organizational failure was message lifecycle ambiguity: communication needed to be a work-transfer protocol with lifecycle state.
-
-**Intervention.** Work messages were required to include a work item, exact ask, exact next action, and reply-needed flag. Inbox checks classified messages as actionable, superseded, or already done. Routine replies were suppressed when no recipient needed to act.
-
-**Changed durable layer.** Message protocol, transparent inbox tools, runtime-contract planning, loop-prevention doctrine.
-
-**Evidence artifact.** Message evidence shows manager review requests with no-reply expectation, closeouts without direct replies, self-triggers that stopped after no-change checks, and execution requests rerouted because current gate truth no longer authorized action.
-
-**General principle.** A message is not chat. It is an auditable trigger for one focused work obligation. Correct silence can be part of accountable, controllable AI labor.
-
-**Limitation.** Message metrics combine two evidence types: work-record routing counts from S1 and packet examples from a bounded inbox sample. They support the mechanism, but they are not a global organization-wide loop-rate estimate.
-
-### 8.3 Case C: From Plausible Prose To Verifier-Reconstructible Artifact And Action Gate
+### 8.2 Case C: From Plausible Prose To Verifier-Reconstructible Artifact And Action Gate
 
 **Initial failure.** A domain specialist could produce plausible narrative analysis, but downstream review needed reconstructible fields: source basis, freshness, settlement mapping, uncertainty, probability or decision structure, confidence, contradiction checks, and no-action triggers.
 
@@ -983,43 +982,13 @@ The case studies use sanitized labels. They are organized to show the main insti
 
 **Limitation.** Domain-specific packet fields are abstracted for readers outside trading.
 
-### 8.4 Case D: Targeted Doctrine Patch Instead Of Whole Rewrite
-
-**Initial failure.** As role contracts and playbooks became more explicit, they also became longer. Whole-document rewrites for small changes risked compression, omitted clauses, restyling, accidental scope changes, and higher context and review cost.
-
-**Organization diagnosis.** Prompt iteration treated doctrine as a single mutable blob. The organizational problem was durable-law mutation: small changes needed to land without damaging unrelated clauses.
-
-**Intervention.** The system introduced targeted replacement edits for role and playbook text. A small correction could specify the old string and the new string, with optional replace-all only when appropriate. This made doctrine mutation local, reviewable, and less likely to silently rewrite unrelated policy.
-
-**Changed durable layer.** Role/playbook mutation tools and doctrine maintenance process.
-
-**Evidence artifact.** Sanitized mechanism evidence identifies anchored replacement behavior. A local-patch pattern is:
-
-```text
-Old clause: if another employee should act, update the work record.
-New clause: if another employee must act, send a direct message naming the work item, exact ask, exact next action, and reply expectation.
-Patch rule: apply only when the old clause is found exactly once.
-```
-
-An ambiguous-anchor pattern is:
-
-```text
-Requested old clause: "send a direct message"
-Result: rejected because the clause appeared in multiple doctrine sections.
-Required repair: narrow the anchor or explicitly authorize replace-all.
-```
-
-**General principle.** AI organizations benefit from doctrine surgery, not only prompt rewriting.
-
-**Limitation.** This case supports the mechanism but not quantitative claims about context-cost savings, lower edit error, or downstream recurrence reduction.
-
-### 8.5 Case E: Replay-To-Institutional-Mutation
+### 8.3 Case E: Replay-To-Institutional-Mutation
 
 **Initial failure.** Completed work could produce outcome truth later, but the lesson could remain trapped in a ticket, message, or one worker’s context. Conversely, one-off outcome facts could be over-promoted into general doctrine.
 
 **Organization diagnosis.** Reflection and memory can generate lessons, but they do not decide where the organization should change.
 
-**Intervention.** Replay records reconstructed the original path and classified learning destination: role, playbook, tool, staffing, topology, workboard, message, or case-only. The stronger replay form also records the role and playbook versions active at decision time, so expected-versus-realized review does not judge old work only by later doctrine. Durable changes required manager or owner authority.
+**Intervention.** Replay records reconstructed the original path and classified learning destination: role, playbook, tool, staffing, topology, workboard, message, or case-only. The stronger replay form also records the role and playbook versions active at decision time, so expected-versus-realized review does not judge old work only by later doctrine. Durable changes required manager-employee authority inside the human-owner governance boundary.
 
 **Changed durable layer.** Replay doctrine, role/playbook/tool/topology mutation process, manager authority boundary.
 
@@ -1029,39 +998,7 @@ Required repair: narrow the anchor or explicitly authorize replace-all.
 
 **Limitation.** Recurrence after mutation is only partially extracted. This report does not claim that any replay-driven change removed a failure class.
 
-### 8.6 Case F: Adaptive Organization Through Role, Tool, Staffing, And Topology Change
-
-**Initial failure.** Adding more AI workers increased routing ambiguity and tool/role mismatch. A worker could exist without the right institutional surface, or a pod could route work without the right verifier/executor chain.
-
-**Organization diagnosis.** Adding specialists as prompts did not define staffing, authority, tool parity, activation, or routing topology.
-
-**Intervention.** The organization developed role families, pods, default chains, manager-only durable changes, tool parity checks, and activation discipline.
-
-**Changed durable layer.** Organization topology, employee/tool lifecycle, role-family contracts, workboard routing.
-
-**Evidence artifact.** Extracted organization rollout and tool-parity cases show that staffing or tool repair could be the correct institutional fix, not another prompt revision.
-
-**General principle.** An AI-staffed organization prototype can adapt institutionally: it can change people, doctrine, tools, routing, and topology.
-
-**Limitation.** This case is presented as mechanism discovery from one organization, not evidence of a generally valid topology.
-
-### 8.7 Case G: Replay Without Immediate Durable Mutation
-
-**Initial failure.** A replay/retro closeout produced a research/doctrine follow-up artifact but did not immediately create a durable playbook, role, tool, staffing, topology, workboard, or message-protocol mutation.
-
-**Organization diagnosis.** Institutional control made the learning gap visible, but visibility did not automatically mean the organization had completed durable learning. This is a negative case against overclaiming replay as recurrence reduction.
-
-**Intervention.** Replay classification separated the case-level finding from immediate durable mutation.
-
-**Changed durable layer.** Replay record and retro closeout state.
-
-**Evidence artifact.** The S1 retro closeout recorded 0 immediate durable patches and 1 research/doctrine follow-up artifact.
-
-**General principle.** Replay can separate outcome truth from live closure, but durable organizational learning remains incomplete until the mutation destination is resolved and the change is activated.
-
-**Limitation.** This report does not measure whether the follow-up artifact later became durable doctrine or reduced recurrence.
-
-### 8.8 Case H: Sprint Compilation Into Child Path Work
+### 8.4 Case H: Sprint Compilation Into Child Path Work
 
 **Initial failure.** A broad owner request could sound operationally clear while leaving the actual AI labor frontier underspecified: which paths existed, who owned each path, which gate applied, which employee was activated, which paths required replay, and when the parent could close.
 
@@ -1087,51 +1024,35 @@ owner intent
 
 **Limitation.** This report shows this mechanism in selected and spot-check samples, but it does not prove the compilation topology is optimal or sufficient for all domains.
 
-### 8.9 Case I: Tool-Parity-Gated Activation
-
-Case F describes the general topology pattern: role families, lanes, default chains, tool parity, and activation discipline. Case I shows one extracted activation-gating lifecycle.
-
-**Initial failure.** A topology change could create live employees with partial capability, stale routing truth, or ambiguous activation. A new role could have contract text while still lacking the tool surface or activation path needed for its assigned work.
-
-**Organization diagnosis.** The activation boundary failed unless role, tool, routing, and activation surfaces all agreed.
-
-**Intervention.** Activation was held until required role, tool, routing, and activation surfaces were directly evidenced as aligned.
-
-**Changed durable layer.** Organization topology, role text, playbook/routing doctrine, tool/profile truth, activation protocol, and workboard cutover state.
-
-**Evidence artifact.** Extracted mechanism evidence shows tool-class parity and activation-gating behavior. Sensitive tool details are omitted from public artifacts.
-
-**General principle.** A role or tool surface is not live institutional capacity until the activation path agrees with the governing routing state.
-
-**Limitation.** This case does not show recurrence effects, reliability effects, or a general rollout method. It shows one source-backed mechanism for holding activation until required role, tool, routing, and activation surfaces aligned.
-
-### 8.10 Case J: Durable Artifact Growth From Repeated Failure
+### 8.5 Case J: Durable Artifact Growth From Repeated Failure
 
 **Initial failure.** Repeated work initially relied on bespoke prompts, comments, or case-specific work text. A manager or employee could correct a local problem, but the same missing structure could reappear because the correction had not become a durable institutional artifact.
 
 **Organization diagnosis.** The failure was not only weak instruction following. It was that one-off correction was not durable doctrine, authority, state, or activation protocol. The organization needed a way to decide which repeated lessons belonged in role contracts, work-record fields, message rules, verifier decision forms, playbooks, replay doctrine, or tool surfaces.
 
-**Intervention.** Under manager or owner authority, recurring fixes were promoted into durable artifact forms. Repeated role ambiguity became role-family contracts. Repeated case-truth ambiguity became work-record fields. Missed handoffs and false motion became message rules. Plausible but unauthorized artifacts became verifier decision forms. Outcome-learning gaps became replay doctrine. Capability gaps became tool-surface changes.
+**Intervention.** Repeated fixes were promoted into durable artifact forms by the manager employee, inside a human-owner governance boundary. Repeated role ambiguity became role-family contracts. Repeated case-truth ambiguity became work-record fields. Missed handoffs and false motion became message rules. Plausible but unauthorized artifacts became verifier decision forms. Outcome-learning gaps became replay doctrine. Capability gaps became tool-surface changes.
 
 **Changed durable layer.** Role contracts, workboard/work-record structure, message protocol, verifier gate fields, playbook doctrine, replay process, and tool surface.
 
-**Evidence artifact.** The intervention timeline, replay cases, targeted doctrine patching, workboard compilation, message discipline, verifier gates, and tool-parity case all show local failures being routed toward durable artifact changes rather than left as isolated conversation.
+**Evidence artifact.** The intervention timeline, replay cases, targeted doctrine patching, workboard compilation, message discipline, verifier gates, and role-family activation case all show local failures being routed toward durable artifact changes rather than left as isolated conversation.
 
 **General principle.** Durable artifact forms are institutional learning outputs. The contribution is not that complete schemas existed at the start, but that runtime-bounded work made missing structure visible enough for authorized promotion.
 
-**Limitation.** This is mechanism evidence. It does not show autonomous self-improvement or a measured recurrence reduction.
+**Limitation.** This is mechanism evidence. It does not show unconstrained self-modification or recurrence reduction.
 
 ## 9. Discussion
 
 ### 9.1 Main Interpretation
 
-The main interpretation is that this field study suggests high-skill AI labor may need a control layer around agents. The organization did not establish global decision-quality improvement merely because workers received more instructions. It made reliability-relevant failures more visible and controllable when failures were converted into durable primitives: role authority, work-state truth, message lifecycle, evidence gates, no-action states, replay, and authorized mutation.
+The main interpretation is that this field study suggests high-skill AI labor may need a control layer around agents. The organization did not establish global decision-quality improvement merely because workers received more instructions. It made reliability-relevant failures more visible and controllable when failures were converted into durable primitives: role authority, playbook doctrine, work-state truth, message lifecycle, evidence gates, no-action states, replay, and authorized mutation.
 
 State, authority, communication, and learning are not claimed to be a complete taxonomy of AI organizations. They are the four control surfaces that became visible in this field study and that organized the observed failure-to-intervention pattern.
 
 This is why "AI organization" should not be used as a loose metaphor for a group of agents. It should name a concrete institutional architecture.
 
-The deployment was AI-staffed in daily operational labor, but not human-free. The human owner remained the boundary for goals, acceptable risk, high-level design direction, and publication judgment. In the S1 window, the bounded sample includes one sprint-opening owner directive, 20 manager-reviewed final closeouts, at least 9/20 child paths requiring packet/source repair before final decision, and no direct staffing/tool/topology mutation. This is evidence about a human-owned, AI-staffed institution, not a claim of fully unsupervised replacement.
+The Related Work positioning table summarizes why agent SDKs, MCP, A2A, enterprise platforms, workflow graphs, and benchmarks remain useful but incomplete for this institutional-control question.
+
+The deployment was AI-staffed for daily operational labor and human-owned for goals, risk boundaries, and outer governance. The manager employee performed sprint, closeout, replay, and institutional-mutation work within that boundary. In the S1 window, the bounded sample includes one sprint-opening owner directive, 20 manager-reviewed final closeouts, at least 9/20 child paths requiring packet/source repair before final decision, and no direct staffing/tool/topology mutation. This is evidence about a human-owned, AI-staffed institution, not a claim of fully unsupervised replacement.
 
 ### 9.2 Falsifiers And Boundary Conditions
 
@@ -1147,22 +1068,7 @@ The thesis would weaken under evidence that:
 
 The paper should welcome these tests. Institutional control is an empirical claim, not a slogan.
 
-### 9.3 What Current Agent Approaches Miss
-
-| Popular focus | Why useful | Why incomplete |
-| --- | --- | --- |
-| Better models | improves reasoning and generation | does not create ownership or closure |
-| Tool use | expands action space | does not define authority |
-| Memory | preserves context | does not create shared doctrine |
-| Handoffs | moves control between agents | does not guarantee accountable work transfer |
-| Workflow graphs | control sequence and persistence | do not define institutional acceptance |
-| Guardrails | validate inputs, outputs, or tool calls | do not replace role authority and verifier topology |
-| Multi-agent teams | distribute expertise | can still rely on conversation as state |
-| Human-in-loop | adds oversight | can hide missing organizational design |
-
-The paper’s claim is stronger than "use multiple agents with tools." It is "make the organization the unit of design and evaluation."
-
-### 9.4 Practical Design Rules For AI Organizations
+### 9.3 Practical Design Rules For AI Organizations
 
 The practical design rules are:
 
@@ -1172,17 +1078,17 @@ The practical design rules are:
 - Review must produce a state decision, not commentary.
 - No-action must be a valid audited output.
 - Learning is incomplete until it changes the right durable layer or is classified case-only.
-- Humans move upward into institutional design: goals, authority, evidence standards, verification topology, replay rules, and mutation rights.
+- Human owners move upward into goals, risk boundaries, and outer governance; manager employees perform scoped institutional operation and mutation inside those boundaries.
 
-### 9.5 Humanlike Interface, Machine-Native Control
+### 9.4 Humanlike Interface, Machine-Native Control
 
 The paper uses terms such as employee, manager, sprint, review, handoff, and retro because they are legible handles for humans and for other AI workers. Those terms should not be read as anthropomorphic evidence or as roleplay. They are the interface layer.
 
-The control layer is machine-native: authority order, role boundaries, tool surfaces, work-record state, child-frontier topology, message freshness, verifier gates, no-action states, fixed stamps, replay linkage, and manager-authorized mutation. A title does not grant authority unless role text, tool access, governing record state, and activation all support it. A manager review is not a courtesy comment; it is a state transition. A sprint kickoff is not a social ritual; it is compiled into live and retro umbrellas, child paths, gates, and exact activations.
+The control layer is machine-native: authority order, role boundaries, tool surfaces, work-record state, child-frontier topology, message freshness, verifier gates, no-action states, fixed stamps, replay linkage, and manager-employee-authorized mutation. A title does not grant authority unless role text, tool access, governing record state, and activation all support it. A manager review is not a courtesy comment; it is a state transition. A sprint kickoff is not a social ritual; it is compiled into live and retro umbrellas, child paths, gates, and exact activations.
 
 This interface/control separation is a useful way to read the whole system. The organization can look familiar, but its auditability comes from explicit state machinery.
 
-### 9.6 Prototype System As Reference Implementation
+### 9.5 Prototype System As Reference Implementation
 
 The prototype system used in this study is best treated as one reference implementation of broader organization-protocol semantics. The paper does not imply that others must adopt the same product, implementation substrate, folder structure, or internal implementation.
 
@@ -1212,7 +1118,7 @@ Product-neutral means technology-independent: the object model is not tied to th
 | Role contract | owned decisions, forbidden decisions, outputs, escalation, handoff interface | created, patched, versioned, retired | tool access is not authority |
 | Playbook doctrine | scope, inputs, outputs, gates, no-action criteria, version | created, read, patched, versioned | retrieved documentation is not durable operating doctrine |
 | Governing work record | owner, state, evidence, blocker, next action, verifier state | opened, routed, blocked, closed, replayed | tool protocols do not define case truth or closure |
-| Work message | sender, recipient, work item, ask, reply flag, inbox state | sent, actionable, superseded, already done | chat is not work-state transfer |
+| Work message | sender, recipient, work item, ask, reply flag, freshness state | sent, actionable, superseded, already done | chat is not work-state transfer |
 | Verifier gate | artifact status, criteria, decision, execution authorization, next owner, authority effect | accept, repair, reroute, decline, needs review | validation alone is not institutional authority |
 | No-action state | type, explicit zero, evidence basis, authority basis, next owner/action, replay requirement | proposed, verified, closed, replayed, classified case-only | capability protocols do not define when not acting is valid work |
 | Closure decision | accepting authority, final state, dependency, rejection/reroute reason, replay obligation | proposed, accepted, kept open, rejected, rerouted, closed | execution protocols do not define institutional finality |
@@ -1222,7 +1128,7 @@ Product-neutral means technology-independent: the object model is not tied to th
 
 For example, in a synthetic security-incident desk, an `employee principal` can be a persistent triage analyst, a `role contract` can permit alert classification while forbidding containment approval, a `governing work record` can own incident truth, a `verifier gate` can accept a packet as reconstructible while declining containment authorization, a `no-action state` can record monitor-only handling, a `closure decision` can close the triage phase while replay stays open, and an `institutional mutation` can update a playbook or role boundary after repeated evidence. The public synthetic example keeps this walkthrough at the organization-protocol level rather than giving security-operations instructions.
 
-### 9.7 Why The Prediction-Market Desk Is A Useful Critical Case
+### 9.6 Why The Prediction-Market Desk Is A Useful Critical Case
 
 Prediction-market trading is a strong empirical stress test because it combines uncertainty, external evidence, delayed outcomes, and real action. The domain punishes unsupported action and makes no-action meaningful.
 
@@ -1276,6 +1182,8 @@ The evidence emphasizes high-signal cases plus selected bounded windows. This st
 
 Duplicate/canonical-parent repair is source-backed and supports the workboard graph-truth mechanism, but the available extraction is not sufficient for a bounded quantitative workboard-frontier result.
 
+Stronger evidence would require a full-corpus extraction, independent coding, pre/post windows tied to specific interventions, and recurrence checks after activated doctrine or topology changes.
+
 ### 11.4 Coding Reliability
 
 Evidence extraction and coding were author-directed. Subsequent work could use independent coders or blinded review for a subset of work records, messages, verifier decisions, no-action states, and replay records.
@@ -1314,27 +1222,7 @@ Main-body figures included in this report:
 
 The report focuses on five main figures to keep the institutional-control argument compact.
 
-### 13.2 Included Tables And Appendix Tables
-
-Main-body tables included in this report:
-
-1. Agent-centric versus organization-centric questions.
-2. Related-work positioning summary.
-3. Level hierarchy.
-4. Organizational primitives and failure modes exposed or controlled.
-5. Deployment overview and evidence corpus.
-6. P1/S1/B1 broader spot-check.
-7. Intervention timeline and 0-to-1 evolution arc.
-8. Authority lattice and durable instruction layers.
-9. Common employee runtime contract semantics.
-10. Metric definitions with data source, status, reported value/window, and limitation.
-11. Topology-control mechanisms.
-12. Mechanism case-study summary.
-13. Product-neutral organization-protocol object model.
-
-Appendix tables include artifact field sets, evidence claim matrix, and evidence-status/coding guide.
-
-### 13.3 Appendix A: Role Contract Field Set
+### 13.2 Appendix A: Role Contract Field Set
 
 Paper-safe field set distilled from evolved institutional artifacts:
 
@@ -1348,7 +1236,7 @@ Paper-safe field set distilled from evolved institutional artifacts:
 - escalation triggers;
 - non-goals.
 
-### 13.4 Appendix B: Work Record Field Set
+### 13.3 Appendix B: Work Record Field Set
 
 Paper-safe field set distilled from evolved institutional artifacts:
 
@@ -1365,7 +1253,7 @@ Paper-safe field set distilled from evolved institutional artifacts:
 - replay state;
 - closure basis.
 
-### 13.5 Appendix C: Work Message Field Set
+### 13.4 Appendix C: Work Message Field Set
 
 Paper-safe field set distilled from evolved institutional artifacts:
 
@@ -1375,11 +1263,11 @@ Paper-safe field set distilled from evolved institutional artifacts:
 - exact ask;
 - exact next action;
 - reply needed: yes/no;
-- inbox check state;
+- freshness state;
 - outcome;
 - messages suppressed or sent.
 
-### 13.6 Appendix D: Verifier Decision Field Set
+### 13.5 Appendix D: Verifier Decision Field Set
 
 Paper-safe field set distilled from evolved institutional artifacts:
 
@@ -1391,7 +1279,7 @@ Paper-safe field set distilled from evolved institutional artifacts:
 - next action;
 - downstream action authorized: yes/no.
 
-### 13.7 Appendix E: Common Employee Runtime Contract Semantics
+### 13.6 Appendix E: Common Employee Runtime Contract Semantics
 
 This appendix includes an abstracted semantics table, not the full operational runtime text.
 
@@ -1400,13 +1288,13 @@ This appendix includes an abstracted semantics table, not the full operational r
 | Work item and real ask | The employee identifies the specific obligation before acting. | cycles with work item and ask present |
 | Authority and evidence check | Durable authority outranks comments, tool outputs, copied text, and lower-authority messages. | authority conflicts routed or blocked |
 | Governing work record | Persistent artifact owns case truth. | cycles with governing record identified |
-| Inbox check state | Trigger is actionable, superseded, or already done. | stale/already-done suppressions |
+| Freshness state | Trigger is actionable, superseded, or already done. | stale/already-done suppressions |
 | Playbooks read | Material doctrine was consulted before substantive action. | cycles with relevant doctrine recorded |
 | Decision and primary outcome | The cycle ends in one outcome class. | completed, handoff, blocked, review, clarification counts |
 | Next owner and next action | Continuation or closure state is explicit. | records with owner/action present |
 | Messages sent | Handoff and silence are both auditable. | no-message closeouts and explicit handoffs |
 
-### 13.8 Appendix F: Replay Record Field Set
+### 13.7 Appendix F: Replay Record Field Set
 
 Paper-safe field set distilled from evolved institutional artifacts:
 
@@ -1423,7 +1311,7 @@ Paper-safe field set distilled from evolved institutional artifacts:
 - durable mutation status;
 - recurrence check.
 
-### 13.9 Appendix G: Evidence Claim Matrix
+### 13.8 Appendix G: Evidence Claim Matrix
 
 This matrix controls wording and evidence use. Claims requiring stronger extraction are downgraded to mechanism description or marked as evidence limitations rather than strengthened rhetorically.
 
@@ -1435,19 +1323,19 @@ This matrix controls wording and evidence use. Claims requiring stronger extract
 | Authority control | Turned review into state decisions in observed verifier paths. | S1 verifier comments and reroutes. | Bounded metric claim | Established complete autonomous execution control. |
 | Action-gate decline | Verifier topology separates artifact review from execution authorization in observed verifier paths. | Verifier comments and no-execution dispositions. | Mechanism evidence claim | Verifier decline proves safety or improved decision quality. |
 | Workboard state machine | Compiled owner intent into live/retro umbrellas, child paths, activations, gates, and replay obligations. | S1/R1/V1 sprint structure and workboard evolution. | Mechanism evidence claim | Proved the topology is optimal or universally required. |
-| Durable artifact growth | Repeated operational failures were promoted into role, work-record, message, verifier, replay, tool, or playbook artifact forms under manager/owner authority. | Intervention timeline, mechanism cases A-J, evolved artifact field sets, and runtime/tool-surface evidence. | Mechanism evidence claim | The system autonomously bootstrapped itself, proved self-improvement, or reduced recurrence. |
+| Durable artifact growth | Recurring fixes were promoted into durable artifact forms by the manager employee inside a human-owner governance boundary. | Cases A-J plus runtime/tool-surface evidence. | Mechanism evidence claim | The system autonomously bootstrapped itself without manager-employee authority, proved self-improvement, or reduced recurrence. |
 | False-motion control | Made stale, duplicate, and non-material work suppressible in observed packets and closeouts. | M1 packets and S1 closeouts. | Mechanism evidence claim | Showed there are no remaining loops. |
 | Learning control | Separated stopping, replay, and doctrine-change destinations. | S1 replay records and retro closeout. | Bounded metric claim | Established recurrence reduction. |
 | Explicit zero | Explicit zero is a verified no-action state where the organization records that no live path or executable action remains. | No-action mechanism evidence and workboard state evidence. | Mechanism evidence claim | Explicit zero proves correctness or successful outcome. |
 | Topology control | Made routing and authority more explicit through role families, lanes, default chains, manager finality, and synchronized truth surfaces. | Organization evolution and mechanism cases. | Mechanism evidence claim | Established a general best organizational topology. |
-| Person-role-aware tool surface | Shows tool capability interpreted through employee principal, role, work state, and manager/user authority. | Tool-surface evolution and authority-control cases. | Mechanism evidence claim | Claimed tool protocols alone enforce all institutional authority. |
+| Person-role-aware tool surface | Shows tool capability interpreted through employee principal, role, work state, and manager-employee / human-owner authority boundaries. | Tool-surface evolution and authority-control cases. | Mechanism evidence claim | Claimed tool protocols alone enforce all institutional authority. |
 | Institutional control | Suggested as useful for high-skill AI labor. | Field study plus mechanism evidence. | Conceptual claim | Claimed this is mandatory for all reliable AI labor. |
 | Durable mutation | Describes a mechanism for changing doctrine, roles, tools, staffing, topology, or message protocol. | Selected evolution/tool records. | Mechanism evidence claim | Reports aggregate mutation rates. |
-| Authorized institutional mutation / tool-parity-gated activation | Shows one source-backed activation-gating mechanism where rollout waited until required role, tool, routing, and activation surfaces were directly evidenced as aligned. | Case I, tool-parity-gated activation. | Mechanism evidence claim | Recurrence reduction, causal reliability improvement, complete activation safety, safe autonomous rollout, successful rollout. |
+| Authorized institutional mutation / role-family activation gating | Shows one source-backed role-family capacity mechanism where activation waited until required role, tool, routing, and activation surfaces were directly evidenced as aligned. | Case I, role-family capacity expansion with activation gating. | Mechanism evidence claim | Recurrence reduction, causal reliability improvement, complete activation safety, safe autonomous rollout, successful rollout. |
 | Targeted doctrine patching | Identifies anchored edits as a mechanism for local doctrine change. | Source-backed tool behavior and sanitized mechanism example. | Mechanism evidence claim; bounded quantitative effects not estimated | Quantifies context-cost savings or error reduction. |
 | Reliability | Made reliability-relevant failures more visible and controllable. | State, authority, communication, and learning evidence. | Design implication | Established global decision-quality improvement. |
 
-### 13.10 Appendix H: Evidence Status And Coding Guide
+### 13.9 Appendix H: Evidence Status And Coding Guide
 
 Current evidence is strongest for mechanism tracing and bounded mature-state audits. It is weaker for aggregate rates.
 
@@ -1455,16 +1343,16 @@ Current evidence is strongest for mechanism tracing and bounded mature-state aud
 | --- | --- | --- |
 | Mechanism case packets from work records | extracted | main qualitative results |
 | Message evidence packets | extracted | message and verifier cases |
-| S1 direct activation count | extracted mechanism evidence | 10 direct activation messages for 20 child records from S1 live umbrella; not a full inbox census |
+| S1 direct activation coverage | extracted mechanism evidence | 20/20 child records direct-activated from S1 live umbrella; not a full inbox census |
 | Single-step scope control | mechanism evidence extracted | runtime-contract rule plus S1 final closeout records; no over-expansion reduction rate |
 | Intervention timeline | extracted/inferred mix | empirical backbone |
 | Harness evolution | inferred from mature runtime contract plus linked mechanism evidence | method claim with caveat; historical prompt-version sequence was not fully reconstructed |
 | Metric definitions | defined | evaluation framework |
 | Denominator-bounded metric values | extracted for selected sprint windows | sample-labeled Results counts |
 | Broader P1/B1 spot-check | shallow metadata coding | selection-bias context, not full-corpus rates |
-| Case I, tool-parity-gated activation | extracted mechanism evidence | activation-gating mechanism; no recurrence, reliability, or safety rate |
-| Case J, durable artifact growth | mechanism evidence extracted | repeated failures promoted into durable artifact forms under manager/owner authority; no self-improvement, recurrence, or generalization rate |
-| Tool-parity metrics | source artifacts identified; bounded estimates not reported | bounded counts are not reported for this mechanism; no denominator or time-to-parity value reported |
+| Case I, role-family capacity expansion with activation gating | extracted mechanism evidence | activation-gating mechanism; no recurrence, reliability, or safety rate |
+| Case J, durable artifact growth | mechanism evidence extracted | recurring fixes promoted into durable artifact forms; no self-modification, recurrence, or generalization rate |
+| Role-family activation readiness | source artifacts identified; bounded estimates not reported | includes staffing/role-family capacity, role contract readiness, work-tool assignment, routing, and direct activation dependencies |
 | Recurrence windows | partial | this study does not estimate recurrence after mutation |
 | Targeted doctrine patch quantitative evidence | defined but not estimated in this study | method claim with explicit caveat |
 
@@ -1482,3 +1370,127 @@ For metrics defined but not estimated in this study, the coding schema is:
 - replay state: not required/pending/complete/missing;
 - mutation destination: role/playbook/tool/staffing/topology/workboard/message/case-only/none;
 - recurrence: none observed/observed/not enough exposure.
+
+### 13.10 Appendix I: Intervention Timeline
+
+The full intervention timeline records the durable layers that emerged as the organization moved from weak agent-team forms to institutional-control forms.
+
+| Stage | Failure pressure | Intervention | Changed durable layer | Evidence status |
+| --- | --- | --- | --- | --- |
+| T0 | Useful specialist agents lacked stable ownership and closure | Persistent AI employees | employee principal, role, inbox | source-backed mechanism evidence |
+| T1 | Roles blurred recommendation, approval, execution, closure, and doctrine editing | Role contracts | role text and role families | extracted |
+| T2 | Lessons stayed in tickets, messages, or memory | Playbooks as doctrine | playbook versions | extracted |
+| T3 | Conversation appeared to own truth | Governing work records | workboard state | extracted |
+| T4 | Assignment or comments did not reliably wake employees | Direct work messages | message protocol | extracted |
+| T5 | Employees could act on stale messages | Freshness pre-check and suppression | runtime contract, inbox tools, messages | extracted |
+| T6 | AI workers could self-certify plausible artifacts | Verifier topology | roles, playbooks, gates | extracted |
+| T7 | Complete work remained open or review-ready without closure | Manager verification queue | workboard, manager role, runtime contract | extracted |
+| T8 | Agents over-produced action | No-action states | review gates and work states | extracted |
+| T9 | Live work stayed fake-active while awaiting delayed outcome truth | Replay split | workboard and replay records | extracted |
+| T10 | Reflection remained commentary | Replay-to-mutation loop | mutation destinations | extracted |
+| T11 | Long doctrine rewrites risked compression and drift | Targeted doctrine patches | role and playbook tools | mechanism evidence; bounded counts not reported |
+| T12 | Capability and authority were confused | Dual tool plane and activation readiness | tool registry and role authority | extracted |
+| T13 | More employees increased routing ambiguity | Pods and role families | organization topology | extracted |
+| T14 | Fixes landed in the wrong layer or were not activated | Adaptive institution loop | institutional mutation process | extracted |
+
+Replay-to-mutation destinations can include roles, playbooks, tools, staffing, topology, workboards, or messages; the table uses the compact label `mutation destinations`.
+
+### 13.11 Appendix J: Additional Mechanism Cases
+
+These additional mechanism cases support the full case map while keeping the main body focused on the anchor cases.
+
+#### Case B: Message Trigger Discipline And Stale/No-Reply Suppression
+
+**Initial failure.** Assignments, comments, and tracker fields did not reliably wake the correct employee. Later, direct messages themselves created a new problem: old or duplicate messages could cause repeated review, acknowledgment loops, or no-change state churn.
+
+**Organization diagnosis.** Multi-agent chat treats communication as collaboration. The organizational failure was message lifecycle ambiguity: communication needed to be a work-transfer protocol with lifecycle state.
+
+**Intervention.** Work messages were required to include a work item, exact ask, exact next action, and reply-needed flag. Freshness checks, using scoped inbox context, classified triggers as actionable, superseded, or already done. Routine replies were suppressed when no recipient needed to act.
+
+**Changed durable layer.** Message protocol, transparent inbox tools, runtime-contract planning, loop-prevention doctrine.
+
+**Evidence artifact.** Message evidence shows manager review requests with no-reply expectation, closeouts without direct replies, self-triggers that stopped after no-change checks, and execution requests rerouted because current gate truth no longer authorized action.
+
+**General principle.** A message is not chat. It is an auditable trigger for one focused work obligation. Correct silence can be part of accountable, controllable AI labor.
+
+**Limitation.** Message metrics combine two evidence types: work-record routing counts from S1 and packet examples from a bounded inbox sample. They support the mechanism, but they are not a global organization-wide loop-rate estimate.
+
+#### Case D: Targeted Doctrine Patch Instead Of Whole Rewrite
+
+**Initial failure.** As role contracts and playbooks became more explicit, they also became longer. Whole-document rewrites for small changes risked compression, omitted clauses, restyling, accidental scope changes, and higher context and review cost.
+
+**Organization diagnosis.** Prompt iteration treated doctrine as a single mutable blob. The organizational problem was durable-law mutation: small changes needed to land without damaging unrelated clauses.
+
+**Intervention.** The system introduced targeted replacement edits for role and playbook text. A small correction could specify the old string and the new string, with optional replace-all only when appropriate. This made doctrine mutation local, reviewable, and less likely to silently rewrite unrelated policy.
+
+**Changed durable layer.** Role/playbook mutation tools and doctrine maintenance process.
+
+**Evidence artifact.** Sanitized mechanism evidence identifies anchored replacement behavior. A local-patch pattern is:
+
+```text
+Old clause: if another employee should act, update the work record.
+New clause: if another employee must act, send a direct message naming the work item, exact ask, exact next action, and reply expectation.
+Patch rule: apply only when the old clause is found exactly once.
+```
+
+An ambiguous-anchor pattern is:
+
+```text
+Requested old clause: "send a direct message"
+Result: rejected because the clause appeared in multiple doctrine sections.
+Required repair: narrow the anchor or explicitly authorize replace-all.
+```
+
+**General principle.** AI organizations benefit from doctrine surgery, not only prompt rewriting.
+
+**Limitation.** This case supports the mechanism but not quantitative claims about context-cost savings, lower edit error, or downstream recurrence reduction.
+
+#### Case F: Adaptive Organization Through Role, Tool, Staffing, And Topology Change
+
+**Initial failure.** Adding more AI workers increased routing ambiguity and tool/role mismatch. A worker could exist without the right institutional surface, or a pod could route work without the right verifier/executor chain.
+
+**Organization diagnosis.** Adding specialists as prompts did not define staffing, authority, tool parity, activation, or routing topology.
+
+**Intervention.** The organization developed role families, pods, default chains, manager-employee-authorized durable changes, tool parity checks, and activation discipline.
+
+**Changed durable layer.** Organization topology, employee/tool lifecycle, role-family contracts, workboard routing.
+
+**Evidence artifact.** Extracted organization rollout and activation-readiness cases show that staffing or tool repair could be the correct institutional fix, not another prompt revision.
+
+**General principle.** An AI-staffed organization prototype can adapt institutionally: it can change people, doctrine, tools, routing, and topology.
+
+**Limitation.** This case is presented as mechanism discovery from one organization, not evidence of a generally valid topology.
+
+#### Case G: Replay Without Immediate Durable Mutation
+
+**Initial failure.** A replay/retro closeout produced a research/doctrine follow-up artifact but did not immediately create a durable playbook, role, tool, staffing, topology, workboard, or message-protocol mutation.
+
+**Organization diagnosis.** Institutional control made the learning gap visible, but visibility did not automatically mean the organization had completed durable learning. This is a negative case against overclaiming replay as recurrence reduction.
+
+**Intervention.** Replay classification separated the case-level finding from immediate durable mutation.
+
+**Changed durable layer.** Replay record and retro closeout state.
+
+**Evidence artifact.** The S1 retro closeout recorded 0 immediate durable patches and 1 research/doctrine follow-up artifact.
+
+**General principle.** Replay can separate outcome truth from live closure, but durable organizational learning remains incomplete until the mutation destination is resolved and the change is activated.
+
+**Limitation.** This report does not measure whether the follow-up artifact later became durable doctrine or reduced recurrence.
+
+#### Case I: Role-Family Capacity Expansion With Activation Gating
+
+Case F describes the general topology pattern: role families, lanes, default chains, tool parity, and activation discipline. Case I shows one extracted role-family capacity lifecycle where activation was gated until the required surfaces aligned.
+
+**Initial failure.** A time-sensitive work lane required additional same-role capacity, not just more prompts. The organization created or activated additional role-family seats only after the role contract, required work tools, routing path, and direct activation agreed. Until those surfaces aligned, the seat was not treated as live capacity.
+
+**Organization diagnosis.** The activation boundary failed unless role, tool, routing, and activation surfaces all agreed.
+
+**Intervention.** Activation was held until required role, tool, routing, and activation surfaces were directly evidenced as aligned.
+
+**Changed durable layer.** Organization topology, role text, playbook/routing doctrine, tool/profile truth, activation protocol, and workboard cutover state.
+
+**Evidence artifact.** Extracted mechanism evidence shows role-family capacity expansion with tool-class parity and activation-gating behavior. Sensitive tool details are omitted from public artifacts.
+
+**General principle.** A new specialist or role-family seat is not live capacity until role authority, required work tools, routing, and direct activation agree.
+
+**Limitation.** This case does not show recurrence effects, reliability effects, or a general rollout method. It shows one source-backed mechanism for holding activation until required role, tool, routing, and activation surfaces aligned.

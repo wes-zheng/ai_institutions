@@ -2,6 +2,10 @@
 
 These examples show the minimal public setup path for trying the reference implementation. Replace angle-bracket values before running the commands.
 
+## Safety Notes
+
+Use a synthetic organization and non-sensitive examples first. Do not paste private trading records, account data, order data, API secrets beyond required provider configuration, or confidential operational records into public experiments.
+
 Base URL:
 
 ```text

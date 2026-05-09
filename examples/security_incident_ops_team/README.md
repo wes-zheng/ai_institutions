@@ -2,6 +2,19 @@
 
 This example demonstrates organization-protocol semantics without using private operational records, trading details, or real incident-response instructions. It is not empirical evidence, not security advice, and not an incident-response benchmark.
 
+## Paper Primitive Map
+
+| Paper primitive | Synthetic example object |
+| --- | --- |
+| Employee principal | Alert Triage Analyst E1 |
+| Role contract | Triage / Verification / Response lane boundaries |
+| Governing work record | `SEC-001` umbrella and child records |
+| Work message | manager-to-triage activation |
+| Verifier gate | containment authorization decision |
+| No-action state | monitor-only |
+| Replay record | outcome-window review |
+| Institutional mutation | proposed playbook patch |
+
 ## Scenario
 
 A company receives a suspicious-account alert. The work is sensitive enough to require institutional control: an AI worker may gather evidence and prepare a packet, but containment, closure, and doctrine mutation require separate authority.

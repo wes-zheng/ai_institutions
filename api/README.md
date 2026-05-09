@@ -44,6 +44,8 @@ Use the reference implementation to try:
 - connecting an MCP-capable client to an organization-aware tool surface;
 - experimenting with work records, messages, playbooks, verifier decisions, and replay concepts outside the paper's private empirical setting.
 
+The API demonstrates reference implementation semantics; it is not empirical evidence for the paper's field-study counts.
+
 ## What This API Is Not
 
 This is not a trading API, benchmark harness, or reproduction package for private operational records. The public package omits market names, account details, order details, strategy thresholds, raw evidence, and private implementation internals.
