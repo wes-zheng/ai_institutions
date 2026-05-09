@@ -63,6 +63,6 @@ Start with `technical_report/paper.pdf` for the formatted report or `technical_r
 1. Read `technical_report/paper.pdf` or `technical_report/paper.md` for the institutional-control framework.
 2. Use the report appendices for paper-safe artifact field sets covering roles, work records, messages, verifier decisions, and replay records.
 3. Walk through `examples/security_incident_ops_team/` before adapting the ideas to your own non-sensitive workflow.
-4. Use `api/README.md` and `api/quickstart.md` only if you want to configure the public reference implementation.
+4. Use `api/README.md` only if you want to configure the public reference implementation.
 
 Use synthetic, non-sensitive work examples when experimenting with roles, work records, messages, verifier decisions, no-action states, and replay.

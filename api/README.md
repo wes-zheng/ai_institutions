@@ -1,51 +1,157 @@
 # Reference Implementation API
 
-This folder describes the minimum API flow needed to try the organization-control ideas from the paper with the public reference implementation.
+Use this guide to create a synthetic organization and try the paper's organization-control ideas in a few minutes.
 
-The API is not the paper's core contribution. The paper argues for portable organization semantics: employee identity, role authority, doctrine, work state, messages, verification, no-action, closure, replay, and governed adaptation. The API gives readers a concrete way to experiment with those ideas.
+MCP is the preferred path: it exposes the full 16-tool organization surface so you can list employees, message the manager, read inboxes, inspect playbooks, and try manager-authorized changes without learning every HTTP endpoint.
 
-## Setup Flow
+Safety: use non-sensitive examples. Do not paste private trading records, account data, order data, or confidential operational records into public experiments. Only enter provider keys when configuring the organization.
 
-1. Sign up with an email and password.
-2. Confirm the email verification code.
-3. Log in to receive an access token and refresh token.
-4. List your user API keys with the access token.
-5. Create an organization.
-6. Configure an MCP client with the API key.
-7. Pass `organization_id` to org-scoped user tools when the MCP client asks which organization to operate on.
+## What You Will Set Up
 
-Account confirmation creates a user API key, but signup and login do not return the key value. After login, list your API keys and use one of them for MCP or API-key-authenticated calls. Create a new key only if your account has no usable key or you want an additional key.
+1. A user account with an automatically created user API key.
+2. A synthetic organization with an automatically created manager employee.
+3. Either an MCP client connection or a few direct API calls.
 
-User API keys identify the user, not a single default organization. In user-authenticated MCP sessions, organization-scoped tools require the returned `<organization_id>` as a tool argument. Employee-scoped sessions can be bound to an employee's organization, but that is outside this minimal public setup path.
+The API demonstrates reference implementation semantics. It is not empirical evidence for the paper's field-study counts.
 
-## Quick Start
+Keep these values as you go: `access_token`, `api_key`, `organization_id`, `manager_employee_id`, and `message_id`.
 
-Use `api/quickstart.md` for the concrete request examples.
+## 1. Request Email Verification
 
-The setup path uses reader-supplied values:
+```sh
+curl -X POST "https://api.promptfunctions.com/v1/signup" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "<email>",
+    "password": "<password>"
+  }'
+```
 
-- `<email>`
-- `<password>`
-- `<verification_code>`
-- `<access_token>`
-- `<api_key>`
-- `<organization_id>`
-- `<openai_key>`
-- `<anthropic_key>`
+## 2. Confirm Signup
 
-Do not put real provider keys, account data, or private operational details in shared examples.
+Use the verification code from your email.
 
-## What This API Is For
+```sh
+curl -X POST "https://api.promptfunctions.com/v1/signup" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "<email>",
+    "verification_code": "<verification_code>",
+    "name": "Your Name"
+  }'
+```
 
-Use the reference implementation to try:
+## 3. Log In
 
-- creating an organization boundary;
-- creating role-bound workers through the product UI or public setup flow;
-- connecting an MCP-capable client to an organization-aware tool surface;
-- experimenting with work records, messages, playbooks, verifier decisions, and replay concepts outside the paper's private empirical setting.
+```sh
+curl -X POST "https://api.promptfunctions.com/v1/login" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "<email>",
+    "password": "<password>"
+  }'
+```
 
-The API demonstrates reference implementation semantics; it is not empirical evidence for the paper's field-study counts.
+Copy the returned `access_token`.
 
-## What This API Is Not
+## 4. Get Your User API Key
+
+Account confirmation creates a user API key. List your keys:
+
+```sh
+curl -X GET "https://api.promptfunctions.com/v1/api_key?limit=5" \
+  -H "Authorization: Bearer <access_token>"
+```
+
+Copy one returned `api_key`. If no key is listed, create one:
+
+```sh
+curl -X POST "https://api.promptfunctions.com/v1/api_key" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer <access_token>" \
+  -d '{}'
+```
+
+## 5. Create A Synthetic Organization
+
+For model-backed employee responses, provide at least one model provider key. This example uses OpenAI; you can use `anthropic_key` instead or include both.
+
+```sh
+curl -X POST "https://api.promptfunctions.com/v1/organization" \
+  -H "Content-Type: application/json" \
+  -H "X-Api-Key: <api_key>" \
+  -d '{
+    "name": "Institutional Control Lab",
+    "openai_key": "<openai_key>"
+  }'
+```
+
+Creating an organization automatically creates its manager employee. Copy the returned `organization_id` and `manager_employee_id`.
+
+## 6A. Preferred: Use MCP
+
+For MCP clients that accept JSON config, add:
+
+```json
+{
+  "mcpServers": {
+    "ai-institutions": {
+      "url": "https://api.promptfunctions.com/mcp",
+      "headers": {
+        "Authorization": "Bearer <api_key>"
+      }
+    }
+  }
+}
+```
+
+Then ask your MCP client:
+
+```text
+List the available tools. Then use organization_id <organization_id> to list employees, identify the manager, ask the manager what they are responsible for and whether the organization already has playbooks or other employees, and read the manager inbox for message status. Do not use private records or sensitive data.
+```
+
+What you should see: user and manager callers can access 16 organization tools covering employees, messages, inboxes, profiles, playbooks, role edits, tool edits, hiring, termination, and playbook mutation. Regular employee callers see the six participation tools for listing, messaging, inbox/profile reads, and playbook reads.
+
+## 6B. Alternative: Use Direct HTTP Calls
+
+Use this path if you want to try the basic organization surface with `curl`.
+
+List employees:
+
+```sh
+curl -X GET "https://api.promptfunctions.com/v1/employee?organization_id=<organization_id>&limit=20" \
+  -H "X-Api-Key: <api_key>"
+```
+
+Message the manager:
+
+```sh
+curl -X POST "https://api.promptfunctions.com/v1/message" \
+  -H "Content-Type: application/json" \
+  -H "X-Api-Key: <api_key>" \
+  -d '{
+    "employee_id": "<manager_employee_id>",
+    "text": "Hi, I just created this organization. What are you responsible for as the manager, and do we already have any playbooks or other employees I should know about?"
+  }'
+```
+
+Copy the returned `message_id`, then poll it:
+
+```sh
+curl -X GET "https://api.promptfunctions.com/v1/message?message_id=<message_id>" \
+  -H "X-Api-Key: <api_key>"
+```
+
+Or read the manager inbox:
+
+```sh
+curl -X GET "https://api.promptfunctions.com/v1/message?employee_id=<manager_employee_id>&limit=10" \
+  -H "X-Api-Key: <api_key>"
+```
+
+Message handling is asynchronous. If the response is not ready, wait briefly and poll again.
+
+## Boundary
 
 This is not a trading API, benchmark harness, or reproduction package for private operational records. The public package omits market names, account details, order details, strategy thresholds, raw evidence, and private implementation internals.
